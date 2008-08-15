@@ -12,9 +12,15 @@
     %script{:type=>"text/javascript"}
       :plain
         Event.addBehavior({ 'a.popup': Popup.TriggerBehavior() });
+        Event.onReady(function() {
+          $('alert').observe('click', Popup.alert.curry('This is an alert message with default buttons'));
+        });
   %body
     %p
       %a.popup{:href=>"#test"} Popup
+    
+    %p
+      %a.alert#alert{:href=>"#alert"} Alert!
     
     %p
       %a.popup{:href=>"/test/ajax.haml"} Ajax Popup

@@ -7,7 +7,7 @@ body {
   font-size: 80%;
   background: url(/test/checkered.png);
 }
-.popup {
+.popup, .alert {
   padding: 10px
 }
 .popup h3.title {

@@ -218,6 +218,36 @@ Popup.AjaxWindow = Class.create(Popup.AbstractWindow, {
   }
 });
 
+Popup.Alert = Class.create(Popup.AbstractWindow, {
+  initialize: function($super, message, options) {
+    $super();
+    this.options = Object.extend({
+      title: 'Alert'
+    }, (options || {}));
+    this.message = message;
+  },
+  
+  beforeShow: function($super) {
+    var titleBar = $h3({'class':'title'}, this.options.title);
+    var buttonBar = $p({'class':'buttons'});
+    var popupContent = $div({'class':'popup'}, titleBar, $p(this.message), buttonBar);
+    this.content.insert(popupContent);
+    
+    var okButton = $a({href:'#ok'}, 'OK');
+    okButton.observe('click', this.close.bind(this));
+    buttonBar.insert(okButton);
+    
+    $super();
+  },
+  
+  close: function() {
+    this.element.remove();
+  }
+});
+Popup.alert = function(message, options) {
+  new Popup.Alert(message, options).show();
+};
+
 // Element extensions
 Element.addMethods({
   closePopup: function(element) {
