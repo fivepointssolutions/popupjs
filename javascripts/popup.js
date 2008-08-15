@@ -82,6 +82,7 @@ Popup.TriggerBehavior = Behavior.create({
     } else {
      this.window = new Popup.AjaxWindow(this.element.href);
     }
+    if (this.element.hasClassName('now')) this.window.show();
   },
   
   onclick: function(event) {
@@ -169,10 +170,10 @@ Popup.AbstractWindow = Class.create({
   
   beforeShow: function() {
     if (Prototype.Browser.IE) {
-      // IE fixes
       var width = this.element.getWidth() - (Popup.BorderThickness * 2);
       this.top.setStyle("width:" + width + "px");
       this.bottom.setStyle("width:" + width + "px");
+      this.content.setStyle("width: " + width + "px");
     }
     this.centerWindowInView();
   },
