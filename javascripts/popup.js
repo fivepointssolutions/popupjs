@@ -230,13 +230,21 @@ Popup.Alert = Class.create(Popup.AbstractWindow, {
   
   beforeShow: function($super) {
     var titleBar = $h3({'class':'title'}, this.options.title);
-    var buttonBar = $p({'class':'buttons'});
-    var popupContent = $div({'class':'popup'}, titleBar, $p(this.message), buttonBar);
-    this.content.insert(popupContent);
+    var buttonBar = $div({'class':'buttons'});
+    var popup = $div({'class':'popup'},
+      titleBar,
+      $div({'class':'popup_content'},
+        $p(this.message),
+        buttonBar
+      )
+    );
+    this.content.insert(popup);
     
-    var okButton = $a({href:'#ok'}, 'OK');
-    okButton.observe('click', this.close.bind(this));
-    buttonBar.insert(okButton);
+    this.okButton = $a({href:'#ok'}, 'OK');
+    this.okButton.observe('click', this.close.bind(this));
+    buttonBar.insert(this.okButton);
+    
+    if (this.options.beforeShow) this.options.beforeShow(this);
     
     $super();
   },
