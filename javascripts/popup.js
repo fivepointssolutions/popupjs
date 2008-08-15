@@ -241,7 +241,7 @@ Popup.Alert = Class.create(Popup.AbstractWindow, {
     this.content.insert(popup);
     
     this.okButton = $a({href:'#ok'}, 'OK');
-    this.okButton.observe('click', this.close.bind(this));
+    this.okButton.observe('click', this.close.bindAsEventListener(this));
     buttonBar.insert(this.okButton);
     
     if (this.options.beforeShow) this.options.beforeShow(this);
@@ -249,8 +249,9 @@ Popup.Alert = Class.create(Popup.AbstractWindow, {
     $super();
   },
   
-  close: function() {
+  close: function(event) {
     this.element.remove();
+    event.stop();
   }
 });
 Popup.alert = function(message, options) {
