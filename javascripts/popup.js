@@ -102,32 +102,29 @@ Popup.AbstractWindow = Class.create({
   },
   
   buildWindow: function() {
-    this.element = $div({'class': 'popup_window', style: 'display: none; padding: 0 ' + Popup.BorderThickness + 'px; position: absolute'});
+    this.element = new Element('table', {className: 'popup_window', style: 'display: none; position: absolute; border-collapse: collapse; padding: 0px; margin: 0px;'});
+    var tbody = new Element('tbody');
+    this.element.insert(tbody)
     
-    this.top = $div({style: 'background: url(' + Popup.BorderImage + '); height: ' + Popup.BorderThickness + 'px'});
-    this.element.insert(this.top);
+    var top_row = $tr();
+    top_row.insert($td({style: 'background: url(' + Popup.BorderTopLeftImage + '); height: ' + Popup.BorderThickness + 'px; width: ' + Popup.BorderThickness + 'px; padding: 0px'}));
+    top_row.insert($td({style: 'background: url(' + Popup.BorderImage + '); height: ' + Popup.BorderThickness + 'px; padding: 0px'}))
+    top_row.insert($td({style: 'background: url(' + Popup.BorderTopRightImage + '); height: ' + Popup.BorderThickness + 'px; width: ' + Popup.BorderThickness + 'px; padding: 0px'}));
+    tbody.insert(top_row);
     
-    var outer = $div({style: 'background: url(' + Popup.BorderImage + '); margin: 0px -' + Popup.BorderThickness + 'px; padding: 0px ' + Popup.BorderThickness + 'px; position: relative'});
-    this.element.insert(outer);
+    var content_row = $tr();
+    content_row.insert($td({style: 'background: url(' + Popup.BorderImage + '); width: ' + Popup.BorderThickness + 'px; padding: 0px'}, ''));
+    this.content = $td({style: 'background-color: white; padding: 0px'});
+    content_row.insert(this.content);
+    content_row.insert($td({style: 'background: url(' + Popup.BorderImage + '); width: ' + Popup.BorderThickness + 'px; padding: 0px'}, ''));
+    tbody.insert(content_row);
     
-    this.bottom = $div({style: 'background: url(' + Popup.BorderImage + '); height: ' + Popup.BorderThickness + 'px'});
-    this.element.insert(this.bottom);
-    
-    var topLeft = $div({style: 'background: url(' + Popup.BorderTopLeftImage + '); height: ' + Popup.BorderThickness + 'px; width: ' + Popup.BorderThickness + 'px; position: absolute; left: 0; top: -' + Popup.BorderThickness + 'px'});
-    outer.insert(topLeft);
-    
-    var topRight = $div({style: 'background: url(' + Popup.BorderTopRightImage + '); height: ' + Popup.BorderThickness + 'px; width: ' + Popup.BorderThickness + 'px; position: absolute; right: 0; top: -' + Popup.BorderThickness + 'px'});
-    outer.insert(topRight);
-    
-    var bottomLeft = $div({style: 'background: url(' + Popup.BorderBottomLeftImage + '); height: ' + Popup.BorderThickness + 'px; width: ' + Popup.BorderThickness + 'px; position: absolute; left: 0; bottom: -' + Popup.BorderThickness + 'px'});
-    outer.insert(bottomLeft);
-    
-    var bottomRight = $div({style: 'background: url(' + Popup.BorderBottomRightImage + '); height: ' + Popup.BorderThickness + 'px; width: ' + Popup.BorderThickness + 'px; position: absolute; right: 0; bottom: -' + Popup.BorderThickness + 'px'});
-    outer.insert(bottomRight);
-    
-    this.content = $div({style: 'background-color: white'});
-    outer.insert(this.content);
-    
+    var bottom_row = $tr();
+    bottom_row.insert($td({style: 'background: url(' + Popup.BorderBottomLeftImage + '); height: ' + Popup.BorderThickness + 'px; width: ' + Popup.BorderThickness + 'px; padding: 0px'}));
+    bottom_row.insert($td({style: 'background: url(' + Popup.BorderImage + '); height: ' + Popup.BorderThickness + 'px; padding: 0px'}))
+    bottom_row.insert($td({style: 'background: url(' + Popup.BorderBottomRightImage + '); height: ' + Popup.BorderThickness + 'px; width: ' + Popup.BorderThickness + 'px; padding: 0px'}));
+    tbody.insert(bottom_row);
+
     var body = $$('body').first();
     body.insert(this.element);
   },
@@ -140,6 +137,9 @@ Popup.AbstractWindow = Class.create({
   show: function() {
     this.beforeShow();
     this.element.show();
+    this.content.select('*').each(function(element) {
+      element.toggleClassName('render');
+    });
     this.afterShow();
   },
   
@@ -169,12 +169,6 @@ Popup.AbstractWindow = Class.create({
   },
   
   beforeShow: function() {
-    if (Prototype.Browser.IE) {
-      var width = this.element.getWidth() - (Popup.BorderThickness * 2);
-      this.top.setStyle("width:" + width + "px");
-      this.bottom.setStyle("width:" + width + "px");
-      this.content.setStyle("width: " + width + "px");
-    }
     this.centerWindowInView();
   },
   
@@ -245,7 +239,6 @@ Popup.Alert = Class.create(Popup.AbstractWindow, {
     buttonBar.insert(this.okButton);
     
     if (this.options.beforeShow) this.options.beforeShow(this);
-    
     $super();
   },
   
@@ -261,6 +254,6 @@ Popup.alert = function(message, options) {
 // Element extensions
 Element.addMethods({
   closePopup: function(element) {
-    $(element).up('div.popup_window').hide();
+    $(element).up('table.popup_window').hide();
   }
 });
